@@ -1,0 +1,168 @@
+<html>
+    <head>
+        <script>
+            function loadFirebase(config) {
+                firebase.initializeApp(config);
+                localStorage.setItem('validConfig', 'true');
+                $('#config-part').hide();
+                $('#loaded-part').show();
+
+                firebase.auth().onAuthStateChanged(function(user) {
+                    if (user) {
+                        console.log(JSON.stringify(user))
+                        user.getIdToken().then(function(token) {
+                            $('#result').text(token)
+                            $('#jwtio').show();
+                            $('#jwtio').attr('href', `https://jwt.io/#debugger-io?token=${token}`);
+                        })
+                    }
+                });
+            }
+        </script>
+    </head>
+    <body> 
+        <div id="config-part">
+            <label for="project-id">Project id: <input class="remember-input" type="text" id="project-id" /></label>
+            <label for="api-key">API key: <input class="remember-input" type="text" id="api-key" /></label>
+
+            <code id="config"></code>
+            <br />
+            <p><div id="input-error"></div></p>
+
+            
+            <p><button id="load">Load</button></p>
+        </div>
+        <div id="loaded-part" style="display: none;">
+            <p><button id="google-signin">Google</button></p>
+            <p>
+                <input class="remember-input" type="email" id="email" />
+                <input type="password" id="password" />
+                <button id="email-signin">Email</button>
+            </p>
+            <p>
+                <span>The user's phone number in E.164 format (e.g. +16505550101).  </span>
+                <input class="remember-input" type="text" id="phonenumber"/> 
+                <button id="phone-getcode">Phone code</button></p>
+                <input type="number" id="phonecode"/>
+                <button id="phone-signin">Phone login</button></p>
+    
+            <a target="_blank" id="jwtio" style="display: none;" href="">View token contents in JWT.io</a>
+            <div id="result">Test</div>
+            <div id="recaptcha-container"></div>
+    
+            <button id="switch-project">Logout firebase project</button>
+        </div>
+        
+
+        <!-- Load all of firebase -->
+        <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-auth.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+
+        <script>
+            let config = {};
+
+            $(document).ready(function(){
+                function rememberInput(elementId) {
+                    const selector = `#${elementId}`;
+                    $(selector).val(localStorage.getItem(elementId));
+                    $(selector).on('blur', function() {
+                        localStorage.setItem(elementId, $(selector).val());
+                    })
+                } 
+
+                $('.remember-input').each(function(_, element) {
+                    rememberInput(element.id);
+                })
+
+                function buildConfig() {
+                    const id = $('#project-id').val();
+                    config = {
+                        projectId: id,
+                        authDomain: `${id}.firebaseapp.com`,
+                        apiKey: $('#api-key').val()
+                    }
+                    $('#config').text(JSON.stringify(config, null, 2))
+                }
+
+                for (let configElement of ['#project-id', '#api-key']) {
+                    $('#project-id').on('change', function() {
+                        buildConfig();
+                    })
+                }
+
+                $('#load').on('click', function(){
+                    try {
+                        loadFirebase(config);
+
+                        $('#result').text('Done!');
+                    } catch(e) {
+                        $('#result').text(e);
+                    }
+                });
+
+                function handleAuthError(error) {
+                    if (error.code === "auth/unauthorized-domain") {
+                        const authDomain = firebase.auth().app.options.authDomain;
+                        const projectName = authDomain.replace('.firebaseapp.com', '');
+                        console.log(JSON.stringify(firebase.auth().app.options));
+                        $('#result').html(`<p>${error.message}</p><p><a target="_blank" href="https://console.firebase.google.com/u/0/project/${projectName}/authentication/providers">Open</a></p>`);
+                        return;
+                    }
+                    $('#result').text(error.message);
+                }
+
+                $('#google-signin').on('click', function() {
+                    var provider = new firebase.auth.GoogleAuthProvider();
+                    firebase.auth().signInWithPopup(provider).then(function() {}, handleAuthError);
+                })
+
+                $('#email-signin').on('click', function() {
+                    var cred = firebase.auth().signInWithEmailAndPassword(
+                        $('#email').val(),
+                        $('#password').val()
+                    ).then(function(){}, handleAuthError);
+                })
+
+                $('#email-signin').on('click', function() {
+                    var cred = firebase.auth().signInWithEmailAndPassword(
+                        $('#email').val(),
+                        $('#password').val()
+                    ).then(function(){}, handleAuthError);
+                })
+
+                $('#phone-getcode').on('click', function(){
+                    const recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
+                    firebase.auth().signInWithPhoneNumber(
+                        $('#phonenumber').val(),
+                        recaptchaVerifier
+                    ).then(function(result) {
+                        $('#phone-signin').unbind('click');
+                        $('#phone-signin').on('click', function() {
+                            result.confirm($('#phonecode').val())
+                        });
+                    });
+                })
+
+                $('#firebase-config').on('blur', function(){
+                    try {
+                        setConfigObject(JSON.parse($('#firebase-config').val()));
+                        $('#input-error').val('');
+                    } catch(e) {
+                        $('#input-error').val(e);
+                    }
+                });
+
+                $('#switch-project').on('click', function() {
+                    localStorage.removeItem('validConfig');
+                    location.reload();
+                })
+
+                buildConfig();
+                if (localStorage.getItem('validConfig')) {
+                    loadFirebase(config);
+                }
+            })
+        </script>
+    </body>
+</html>
