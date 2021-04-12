@@ -125,10 +125,9 @@
                         </div>
                         <div class="six columns">
                           <label for="api-key">API key</label>
-                          <input placeholder="api-key" class="remember-input u-full-width" type="text" id="api-key" />
+                          <input placeholder="api-key" class="remember-input u-full-width" type="password" id="api-key" />
                         </div>
                     </div>
-                    <pre><code id="config" class="pretty-print"></code></pre>
                     <p><button id="load" class="button-primary">Connect project</button></p>
                 </form>
                 
@@ -217,7 +216,6 @@
                         authDomain: `${id}.firebaseapp.com`,
                         apiKey: $('#api-key').val()
                     }
-                    $('#config').text(JSON.stringify(config, null, 2))
                 }
 
                 for (let configElement of ['#project-id', '#api-key']) {
