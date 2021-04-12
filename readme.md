@@ -14,7 +14,7 @@ But if you want to get the JWT for a google account or having phone number login
 
 If you run this locally, it will likely work out-of-the-box as you've probably got `localhost` added to you Firebase Authorised domains but if not or if you're running this from anywhere else you will need to add it in first.
 
-## Security
+## Security
 
 You can check the code, this tool never sends anything to any backend aside from google. It saves some inputs to make it easier to use in local storage but it's not doing anything with these. But always use extreme caution, download, check the code and run locally if you're unsure!
 
