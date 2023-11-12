@@ -27,3 +27,9 @@ npm install http-server
 http-server
 open http://localhost:8000
 ```
+
+To run this repo simply:
+```shell
+npm i;
+npm start;
+```
