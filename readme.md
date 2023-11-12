@@ -20,15 +20,9 @@ You can check the code, this tool never sends anything to any backend aside from
 
 ## Running locally
 
-Unfortunatly, the firebase requires some browser functionlity that's not available when serving from file, so instead we run a simply web server to host the html. Any web server will do, for example:
+Unfortunatly, the firebase requires some browser functionlity that's not available when serving from file, so instead we run a simply web server to host the html. Any web server will do. There is a simple node server already configured for you in this repo.
 
-```
-npm install http-server
-http-server
-open http://localhost:8000
-```
-
-To run this repo simply:
+To run this project simply clone it and then run (with nodejs installed):
 ```shell
 npm i;
 npm start;
