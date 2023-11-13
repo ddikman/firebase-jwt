@@ -12,18 +12,24 @@ curl 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?
 
 But if you want to get the JWT for a google account or having phone number login or so, it's a bit trickier so I created this tiny app to help.
 
-If you run this locally, it will likely work out-of-the-box as you've probably got `localhost` added to you Firebase Authorised domains but if not or if you're running this from anywhere else you will need to add it in first.
+## The app
 
-## Security
+![Example of the running app](example.png)
 
-You can check the code, this tool never sends anything to any backend aside from google. It saves some inputs to make it easier to use in local storage but it's not doing anything with these. But always use extreme caution, download, check the code and run locally if you're unsure!
+If you run this locally, it will likely work out-of-the-box as you've probably got `localhost` added to you Firebase Authorized domains.
 
-## Running locally
+If you want to run it without cloning the repo, you can access a hosted version on https://ddikman.github.io/firebase-jwt/ just make sure you add it to your `Authorized domains`
+
+### Running locally
 
 Unfortunatly, the firebase requires some browser functionlity that's not available when serving from file, so instead we run a simply web server to host the html. Any web server will do. There is a simple node server already configured for you in this repo.
 
 To run this project simply clone it and then run (with nodejs installed):
 ```shell
-npm i;
-npm start;
+npm install
+npm start
 ```
+
+## Security
+
+You can check the code, this tool never sends anything to any backend aside from google. It saves some inputs to make it easier to use in local storage but it's not doing anything with these. But always use extreme caution, download, check the code and run locally if you're unsure!
